@@ -2,23 +2,23 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
-import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
 import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.*;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
-import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LabAgent extends AbstractDedaleAgent {
+public class LabCollectorAgent extends AbstractDedaleAgent {
     /**
      * This method is automatically called when "agent".start() is executed.
      * Consider that Agent is launched for the first time.
@@ -28,27 +28,8 @@ public class LabAgent extends AbstractDedaleAgent {
     protected void setup() {
         super.setup();
 
-        //AID and roles
-        System.out.println("My AID is " + getAID().getName());
-        Object[] args = getArguments();
-        if (args != null) {
-            for (int i=0; i < args.length; ++i) {
-                System.out.println(args[i]+ " ");
-            }
-        }
-
-        //use them as parameters for your behaviours is you want
         List<Behaviour> lb = behavioursList();
 
-
-        //Algoritmo de búsqueda de recursos
-        //String ubiActual = String.valueOf(getCurrentPosition());
-        //System.out.println("Mi ubicacion es " + getCurrentPosition().toString());
-
-
-
-
-        // MANDATORY TO ALLOW YOUR AGENT TO BE DEPLOYED CORRECTLY
         addBehaviour(new startMyBehaviours(this, lb));
     }
 
@@ -65,15 +46,9 @@ public class LabAgent extends AbstractDedaleAgent {
                 } catch (FIPAException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println("Lab agent registered");
+                System.out.println("LabCollector agent registered");
             }
         });
-        /*lb.add(new TickerBehaviour(this, 5000) {
-            @Override
-            protected void onTick() {
-                System.out.println("Another tick");
-            }
-        }); //tickerBehaviour*/
         lb.add(new CyclicBehaviour() {
             @Override
             public void action() {
@@ -83,58 +58,34 @@ public class LabAgent extends AbstractDedaleAgent {
                     throw new RuntimeException(e);
                 }
                 try {
-                    AID aidAgent = searchAgent();
+                    searchAgent();
                 } catch (FIPAException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println("Cyclic operation of send message");
-                sendingMessage();
+                ACLMessage msg = receive();
+                if (msg != null) {
+                    System.out.println("Llego el mensaje");
+                    System.out.println(msg.getContent());
+                }
             }
         });
-        /*SequentialBehaviour sb = new SequentialBehaviour();
-        sb.add(new TickerBehaviour() {
-
-            @Override
-            public void action() {
-
-            }
-
-            @Override
-            public boolean done() {
-                return false;
-            }
-        });*/
-        /*lb.add(new WakerBehaviour(this, 5000) {
-            @Override
-            protected void onWake() {
-                System.out.println("I'm awake");
-                super.onWake();
-            }
-        });*/
-        //lb.add(new SayHelloBehaviour(this));
         return lb;
-    }
-
-    private void sendingMessage() {
-        ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
-        msg.addReceiver (new AID ("LabCollector", AID.ISLOCALNAME));
-        msg.setContent("BUENAS"); send (msg);
     }
 
     private void register() throws FIPAException {
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
-        sd.setName("Lab");
-        sd.setType("agentExplo");
+        sd.setName("LabCollector");
+        sd.setType("agentCollect");
         dfd.addServices(sd);
         DFService.register(this,dfd);
     }
 
-    private AID searchAgent() throws FIPAException {
+    private void searchAgent() throws FIPAException {
         DFAgentDescription template = new DFAgentDescription();
         ServiceDescription templateSd = new ServiceDescription();
-        templateSd.setType("agentCollect");
+        templateSd.setType("agentExplo");
         template.addServices(templateSd);
 
         SearchConstraints sc = new SearchConstraints();
@@ -143,15 +94,12 @@ public class LabAgent extends AbstractDedaleAgent {
 
         DFAgentDescription[] results = DFService.search(this, template, sc);
 
-        AID provider = null;
         if (results.length > 0) {
             DFAgentDescription dfd = results[0];
-            provider = dfd.getName();
+            AID provider = dfd.getName();
             System.out.println("The explorer AID is " + provider);
         }
-        return provider;
     }
-
     /**
      * This method is automatically called after doDelete()
      */

@@ -3,9 +3,20 @@
     "agentType":"agentExplo",
     "agentName": "Lab",
     "communicationRange": 3,
-    "initialLocation": "free",
+    "initialLocation": 48,
     "backPackCapacityGold": -1,
     "backPackCapacityDiamond":-1, 
+    "detectionRadius": 0,
+    "strengthExpertise": 1,
+    "lockPickingExpertise":1
+  },
+  {
+    "agentType":"agentCollect",
+    "agentName": "LabCollector",
+    "communicationRange": 3,
+    "initialLocation": 41,
+    "backPackCapacityGold": -1,
+    "backPackCapacityDiamond":-1,
     "detectionRadius": 0,
     "strengthExpertise": 1,
     "lockPickingExpertise":1
