@@ -40,13 +40,13 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
         lb.add(new OneShotBehaviour() {
             @Override
             public void action() {
-                System.out.println("One shot behave");
                 try {
+                    System.out.println("Soy el Agente B y mi AID es " + getAID().getName());
                     register();
                 } catch (FIPAException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println("LabCollector agent registered");
+                System.out.println("LabCollector (Agente B) registered");
             }
         });
         lb.add(new CyclicBehaviour() {
@@ -55,11 +55,6 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    searchAgent();
-                } catch (FIPAException e) {
                     throw new RuntimeException(e);
                 }
                 ACLMessage msg = receive();
@@ -82,24 +77,6 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
         DFService.register(this,dfd);
     }
 
-    private void searchAgent() throws FIPAException {
-        DFAgentDescription template = new DFAgentDescription();
-        ServiceDescription templateSd = new ServiceDescription();
-        templateSd.setType("agentExplo");
-        template.addServices(templateSd);
-
-        SearchConstraints sc = new SearchConstraints();
-        // We want to receive 10 results at most
-        sc.setMaxResults(new Long(10));
-
-        DFAgentDescription[] results = DFService.search(this, template, sc);
-
-        if (results.length > 0) {
-            DFAgentDescription dfd = results[0];
-            AID provider = dfd.getName();
-            System.out.println("The explorer AID is " + provider);
-        }
-    }
     /**
      * This method is automatically called after doDelete()
      */

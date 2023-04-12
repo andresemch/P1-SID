@@ -5,6 +5,7 @@ import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.SearchBehaviour;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
@@ -27,24 +28,17 @@ public class LabAgent extends AbstractDedaleAgent {
      * 2) add the behaviours
      */
 
+    Location origin;
+
+    AID CollectorAID;
+
     protected void setup() {
         super.setup();
-
-        //AID and roles
-        System.out.println("My AID is " + getAID().getName());
-        Object[] args = getArguments();
-        if (args != null) {
-            for (int i=0; i < args.length; ++i) {
-                System.out.println(args[i]+ " ");
-            }
-        }
 
         //use them as parameters for your behaviours is you want
         List<Behaviour> lb = behavioursList();
         // MANDATORY TO ALLOW YOUR AGENT TO BE DEPLOYED CORRECTLY
         addBehaviour(new startMyBehaviours(this, lb));
-
-
 
 
     }
@@ -56,26 +50,42 @@ public class LabAgent extends AbstractDedaleAgent {
         lb.add(new OneShotBehaviour() {
             @Override
             public void action() {
-                System.out.println("One shot behave");
                 try {
+                    System.out.println("Soy el Agente A y mi AID es " + getAID().getName());
                     register();
+                    origin = getCurrentPosition();
                 } catch (FIPAException e) {
                     throw new RuntimeException(e);
                 }
 
-                //Algoritmo de búsqueda de recursos
-                String ubiActual = String.valueOf(getCurrentPosition());
-                System.out.println("Mi ubicacion es " + getCurrentPosition().toString());
-
-                System.out.println("Lab agent registered");
+                System.out.println("Lab agent (Agente A) registered");
+            }
+        });
+        lb.add(new OneShotBehaviour() {
+            @Override
+            public void action() {
+                try {
+                    searchAgent();
+                } catch (FIPAException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         lb.add(new CyclicBehaviour() {
             @Override
             public void action() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 System.out.println("Lista observe " + observe());
-
-                boolean moving = moveTo(observe().get(1).getLeft());
+                // boolean moving = moveTo(observe().get(1).getLeft());
+                //try {
+                //    System.out.println(searchAgent());
+                //} catch (FIPAException e) {
+                //    throw new RuntimeException(e);
+                //}
             }
         });
         lb.add(new CyclicBehaviour() {
@@ -125,6 +135,8 @@ public class LabAgent extends AbstractDedaleAgent {
         return lb;
     }
 
+
+
     private void sendingMessage() {
         ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
         msg.addReceiver (new AID ("LabCollector", AID.ISLOCALNAME));
@@ -141,7 +153,7 @@ public class LabAgent extends AbstractDedaleAgent {
         DFService.register(this,dfd);
     }
 
-    private AID searchAgent() throws FIPAException {
+    private void searchAgent() throws FIPAException {
         DFAgentDescription template = new DFAgentDescription();
         ServiceDescription templateSd = new ServiceDescription();
         templateSd.setType("agentCollect");
@@ -153,13 +165,11 @@ public class LabAgent extends AbstractDedaleAgent {
 
         DFAgentDescription[] results = DFService.search(this, template, sc);
 
-        AID provider = null;
         if (results.length > 0) {
             DFAgentDescription dfd = results[0];
-            provider = dfd.getName();
-            System.out.println("The explorer AID is " + provider);
+            CollectorAID = dfd.getName();
+            System.out.println("The explorer AID is " + CollectorAID);
         }
-        return provider;
     }
 
     /**
