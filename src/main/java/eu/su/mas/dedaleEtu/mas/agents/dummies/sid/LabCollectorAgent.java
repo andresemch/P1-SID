@@ -104,7 +104,6 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
      * This method is automatically called after doDelete()
      */
     protected void takeDown() {
-        System.out.println("I'm leaving. Good bye!");
         super.takeDown();
     }
 

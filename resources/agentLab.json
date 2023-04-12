@@ -10,6 +10,7 @@
     "strengthExpertise": 1,
     "lockPickingExpertise":1
   },
+
   {
     "agentType":"agentCollect",
     "agentName": "LabCollector",
