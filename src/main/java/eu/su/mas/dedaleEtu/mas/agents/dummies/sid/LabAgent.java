@@ -71,7 +71,7 @@ public class LabAgent extends AbstractDedaleAgent {
                 }
             }
         });
-        lb.add(new CyclicBehaviour() {
+        /*lb.add(new CyclicBehaviour() {
             @Override
             public void action() {
                 try {
@@ -80,58 +80,9 @@ public class LabAgent extends AbstractDedaleAgent {
                     throw new RuntimeException(e);
                 }
                 System.out.println("Lista observe " + observe());
-                // boolean moving = moveTo(observe().get(1).getLeft());
-                //try {
-                //    System.out.println(searchAgent());
-                //} catch (FIPAException e) {
-                //    throw new RuntimeException(e);
-                //}
-            }
-        });
-        lb.add(new CyclicBehaviour() {
-            @Override
-            public void action() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    AID aidAgent = searchAgent();
-                } catch (FIPAException e) {
-                    throw new RuntimeException(e);
-                }
-                System.out.println("Cyclic operation of send message");
-                sendingMessage();
-            }
-        });
-        /*lb.add(new TickerBehaviour(this, 5000) {
-            @Override
-            protected void onTick() {
-                System.out.println("Another tick");
-            }
-        }); //tickerBehaviour*/
-        /*SequentialBehaviour sb = new SequentialBehaviour();
-        sb.add(new TickerBehaviour() {
-
-            @Override
-            public void action() {
-
-            }
-
-            @Override
-            public boolean done() {
-                return false;
             }
         });*/
-        /*lb.add(new WakerBehaviour(this, 5000) {
-            @Override
-            protected void onWake() {
-                System.out.println("I'm awake");
-                super.onWake();
-            }
-        });*/
-        //lb.add(new SayHelloBehaviour(this));
+        lb.add(new SearchBehaviour(this, null));
         return lb;
     }
 
