@@ -26,6 +26,7 @@ public class LabAgent extends AbstractDedaleAgent {
      * 1) set the agent attributes
      * 2) add the behaviours
      */
+
     protected void setup() {
         super.setup();
 
