@@ -2,8 +2,8 @@
   { 
     "agentType":"agentExplo",
     "agentName": "Lab",
-    "communicationRange": 3,
-    "initialLocation": 48,
+    "communicationRange": 1,
+    "initialLocation": "free",
     "backPackCapacityGold": -1,
     "backPackCapacityDiamond":-1, 
     "detectionRadius": 0,
@@ -13,8 +13,8 @@
   {
     "agentType":"agentCollect",
     "agentName": "LabCollector",
-    "communicationRange": 3,
-    "initialLocation": 41,
+    "communicationRange": 1,
+    "initialLocation": "free",
     "backPackCapacityGold": -1,
     "backPackCapacityDiamond":-1,
     "detectionRadius": 0,

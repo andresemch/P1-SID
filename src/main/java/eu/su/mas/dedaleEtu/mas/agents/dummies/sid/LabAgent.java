@@ -1,5 +1,6 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 
+import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
@@ -39,17 +40,12 @@ public class LabAgent extends AbstractDedaleAgent {
 
         //use them as parameters for your behaviours is you want
         List<Behaviour> lb = behavioursList();
-
-
-        //Algoritmo de búsqueda de recursos
-        //String ubiActual = String.valueOf(getCurrentPosition());
-        //System.out.println("Mi ubicacion es " + getCurrentPosition().toString());
-
-
-
-
         // MANDATORY TO ALLOW YOUR AGENT TO BE DEPLOYED CORRECTLY
         addBehaviour(new startMyBehaviours(this, lb));
+
+
+
+
     }
 
     private List<Behaviour> behavioursList() {
@@ -65,15 +61,22 @@ public class LabAgent extends AbstractDedaleAgent {
                 } catch (FIPAException e) {
                     throw new RuntimeException(e);
                 }
+
+                //Algoritmo de búsqueda de recursos
+                String ubiActual = String.valueOf(getCurrentPosition());
+                System.out.println("Mi ubicacion es " + getCurrentPosition().toString());
+
                 System.out.println("Lab agent registered");
             }
         });
-        /*lb.add(new TickerBehaviour(this, 5000) {
+        lb.add(new CyclicBehaviour() {
             @Override
-            protected void onTick() {
-                System.out.println("Another tick");
+            public void action() {
+                System.out.println("Lista observe " + observe());
+
+                boolean moving = moveTo(observe().get(1).getLeft());
             }
-        }); //tickerBehaviour*/
+        });
         lb.add(new CyclicBehaviour() {
             @Override
             public void action() {
@@ -91,6 +94,12 @@ public class LabAgent extends AbstractDedaleAgent {
                 sendingMessage();
             }
         });
+        /*lb.add(new TickerBehaviour(this, 5000) {
+            @Override
+            protected void onTick() {
+                System.out.println("Another tick");
+            }
+        }); //tickerBehaviour*/
         /*SequentialBehaviour sb = new SequentialBehaviour();
         sb.add(new TickerBehaviour() {
 
