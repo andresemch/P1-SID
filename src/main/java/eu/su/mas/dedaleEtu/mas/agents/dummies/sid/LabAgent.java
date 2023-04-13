@@ -30,6 +30,8 @@ public class LabAgent extends AbstractDedaleAgent {
 
     Location origin;
 
+    boolean found = false;
+
     AID CollectorAID;
 
     protected void setup() {
@@ -51,9 +53,9 @@ public class LabAgent extends AbstractDedaleAgent {
             @Override
             public void action() {
                 try {
-                    System.out.println("Soy el Agente A y mi AID es " + getAID().getName());
                     register();
                     origin = getCurrentPosition();
+                    System.out.println("Soy el Agente A y mi AID es " + getAID().getName() + " y mi posición inicial es " + origin);
                 } catch (FIPAException e) {
                     throw new RuntimeException(e);
                 }
@@ -71,27 +73,32 @@ public class LabAgent extends AbstractDedaleAgent {
                 }
             }
         });
-        /*lb.add(new CyclicBehaviour() {
+        lb.add(new CyclicBehaviour() {
             @Override
             public void action() {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                if (!found) {
+                    sendingMessage();
+                    ACLMessage msg = receive();
+                    if (msg != null) {
+                        System.out.println("Exp: Responde correctamente");
+                        found = true;
+                    }
                 }
-                System.out.println("Lista observe " + observe());
             }
-        });*/
-        lb.add(new SearchBehaviour(this, null));
+        });
+        lb.add(new SearchBehaviour(this, null, CollectorAID, origin));
         return lb;
     }
 
 
 
     private void sendingMessage() {
+        System.out.printf("Exp: intento envio");
         ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
-        msg.addReceiver (new AID ("LabCollector", AID.ISLOCALNAME));
-        msg.setContent("BUENAS"); send (msg);
+        msg.addReceiver (CollectorAID);
+        msg.setContent(String.valueOf(origin));
+        msg.setSender(this.getAID());
+        sendMessage (msg); //IMPORTANTE PARA RESPETAR EL RANGO DE COMUNICACIÓN
     }
 
     private void register() throws FIPAException {
@@ -119,7 +126,7 @@ public class LabAgent extends AbstractDedaleAgent {
         if (results.length > 0) {
             DFAgentDescription dfd = results[0];
             CollectorAID = dfd.getName();
-            System.out.println("The explorer AID is " + CollectorAID);
+            System.out.println("The collector AID is " + CollectorAID);
         }
     }
 

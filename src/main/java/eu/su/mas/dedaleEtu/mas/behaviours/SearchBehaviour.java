@@ -1,5 +1,6 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
+import com.sun.corba.ee.impl.encoding.BufferManagerWrite;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
@@ -8,6 +9,7 @@ import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
 import jade.core.behaviours.SimpleBehaviour;
+import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,11 +34,17 @@ public class SearchBehaviour extends SimpleBehaviour {
      */
     private final Set<String> closedNodes;
 
-    public SearchBehaviour(final AbstractDedaleAgent myagent, MapRepresentation myMap) {
+    private final AID CollectorAID;
+
+    private final Location origin;
+
+    public SearchBehaviour(final AbstractDedaleAgent myagent, MapRepresentation myMap, AID CollectorAID, Location origin) {
         super(myagent);
         this.myMap = myMap;
         this.openNodes = new ArrayList<>();
         this.closedNodes = new HashSet<>();
+        this.CollectorAID = CollectorAID;
+        this.origin = origin;
     }
 
     @Override
@@ -70,13 +78,14 @@ public class SearchBehaviour extends SimpleBehaviour {
                 String nodeId = lob.getLeft().getLocationId();
                 if (!this.closedNodes.contains(nodeId)) {
 
+
                     boolean wind = false;
                     if (!this.openNodes.contains(nodeId)) {
 
                         for (Couple<Observation, Integer> ob : lob.getRight()) {
                             if (ob.getLeft() == Observation.WIND) {
+                                System.out.println("WIND found");
                                 wind = true;
-                                System.out.println("wind found, node should not be explored");
                                 break;
                             }
                         }
@@ -105,17 +114,32 @@ public class SearchBehaviour extends SimpleBehaviour {
                 //4) select next move.
                 //4.1 If there exist one open node directly reachable, go for it,
                 //	 otherwise choose one from the openNode list, compute the shortestPath and go for it
-                if (nextNode == null) {
-                    //there is no directly accessible openNode
-                    //chose one, compute the path and take the first step.
-                    nextNode = this.myMap.getShortestPath(myPosition, this.openNodes.get(0)).get(0);
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
 
-                System.out.println(this.myAgent.getLocalName() + " - State of the observations : " + lobs);
+                ACLMessage msg = myAgent.receive();
+                if (msg != null) {
+                    finished = true;
+                    System.out.println("Search behaviour finished");
+                } else {
 
 
-                // END API CALL ILUSTRATION
-                ((AbstractDedaleAgent) this.myAgent).moveTo(new gsLocation(nextNode));
+                    if (nextNode == null) {
+                        //there is no directly accessible openNode
+                        //chose one, compute the path and take the first step.
+                        nextNode = this.myMap.getShortestPath(myPosition, this.openNodes.get(0)).get(0);
+                    }
+
+                    System.out.println(this.myAgent.getLocalName() + " - State of the observations : " + lobs);
+
+
+                    // END API CALL ILUSTRATION
+                    ((AbstractDedaleAgent) this.myAgent).moveTo(new gsLocation(nextNode));
+                }
             }
         }
     }
