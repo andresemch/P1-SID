@@ -4,12 +4,9 @@ import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
-import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SearchBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -17,7 +14,6 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
-import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,7 +73,7 @@ public class LabAgent extends AbstractDedaleAgent {
                 }
             }
         });
-        lb.add(new CyclicBehaviour() {
+      Behaviour enviarmensaje= new CyclicBehaviour() {
             @Override
             public void action() {
                 if (!found) {
@@ -93,8 +89,16 @@ public class LabAgent extends AbstractDedaleAgent {
                     }
                 }
             }
-        });
-        lb.add(new SearchBehaviour(this, myMap, CollectorAID, origin));
+        };
+        lb.add(enviarmensaje);
+        if (enviarmensaje.done()) System.out.println("\n***** Si que acaba el cyclic ******\n");
+
+        Behaviour busca= new SearchBehaviour(this, myMap, CollectorAID, origin);
+        lb.add(busca);
+        if (busca.done()){
+            System.out.println("\n ----Ha acabado el behaviour ---- \n");
+            System.out.println(myMap==null);
+        }
         return lb;
     }
 
@@ -110,6 +114,8 @@ public class LabAgent extends AbstractDedaleAgent {
         msg.setSender(this.getAID());
         sendMessage (msg); //IMPORTANTE PARA RESPETAR EL RANGO DE COMUNICACIÓN
     }
+
+
 
     /*private void sendingMessage2() throws IOException {
         System.out.printf("Exp: intento envio");
