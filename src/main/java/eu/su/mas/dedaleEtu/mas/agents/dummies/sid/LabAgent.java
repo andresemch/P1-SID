@@ -104,7 +104,7 @@ public class LabAgent extends AbstractDedaleAgent {
         System.out.printf("Exp: intento envio");
         ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
         msg.addReceiver (CollectorAID);
-        Couple<Location, MapRepresentation> struct = new Couple<>(origin, myMap);
+        Couple<String, MapRepresentation> struct = new Couple<>(origin.toString(), myMap);
         msg.setContentObject(struct);
         //msg.setContentObject(myMap);
         msg.setSender(this.getAID());

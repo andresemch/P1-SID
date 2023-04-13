@@ -30,7 +30,7 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
      * 2) add the behaviours
      */
 
-    Couple<Location, MapRepresentation> struct;
+    Couple<String, MapRepresentation> struct;
     Location originA;
     boolean found = false;
     AID ExplorerAID;
@@ -75,12 +75,15 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
             public void action() {
                 ACLMessage msg = receive();
                 if (msg != null) {
-                    /*try {
-                        struct = (Couple<Location, MapRepresentation>) msg.getContentObject();
-                        System.out.println("Col: Llego el mensaje con loc" + struct.getLeft().toString());
+                    try {
+                        struct = (Couple<String, MapRepresentation>) msg.getContentObject();
+//                        System.out.println("REACHES HERE");
+                        //System.out.println("Col: Llego el mensaje con loc" + struct.getLeft().toString());
+                        System.out.println("REACHES HERE");
+                        System.out.println(struct.getLeft());
                     } catch (UnreadableException e) {
                         throw new RuntimeException(e);
-                    }*/
+                    }
                     System.out.println("Col: Llego el mensaje");
                     sendingMessage();
                 }
