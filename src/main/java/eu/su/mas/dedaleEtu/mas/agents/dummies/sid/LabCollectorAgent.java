@@ -1,8 +1,10 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 
+import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
 import jade.core.Location;
 import jade.core.behaviours.Behaviour;
@@ -15,6 +17,7 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,7 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
      * 2) add the behaviours
      */
 
+    Couple<Location, MapRepresentation> struct;
     Location originA;
     boolean found = false;
     AID ExplorerAID;
@@ -71,7 +75,13 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
             public void action() {
                 ACLMessage msg = receive();
                 if (msg != null) {
-                    System.out.println("Col: Llego el mensaje " + msg.getContent());
+                    /*try {
+                        struct = (Couple<Location, MapRepresentation>) msg.getContentObject();
+                        System.out.println("Col: Llego el mensaje con loc" + struct.getLeft().toString());
+                    } catch (UnreadableException e) {
+                        throw new RuntimeException(e);
+                    }*/
+                    System.out.println("Col: Llego el mensaje");
                     sendingMessage();
                 }
             }

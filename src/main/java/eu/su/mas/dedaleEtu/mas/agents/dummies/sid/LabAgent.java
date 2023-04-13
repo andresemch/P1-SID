@@ -1,11 +1,13 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 
+import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SearchBehaviour;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
@@ -17,6 +19,7 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +32,7 @@ public class LabAgent extends AbstractDedaleAgent {
      */
 
     Location origin;
+    MapRepresentation myMap = null;
 
     boolean found = false;
 
@@ -77,7 +81,11 @@ public class LabAgent extends AbstractDedaleAgent {
             @Override
             public void action() {
                 if (!found) {
-                    sendingMessage();
+                    try {
+                        sendingMessage();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     ACLMessage msg = receive();
                     if (msg != null) {
                         System.out.println("Exp: Responde correctamente");
@@ -86,20 +94,31 @@ public class LabAgent extends AbstractDedaleAgent {
                 }
             }
         });
-        lb.add(new SearchBehaviour(this, null, CollectorAID, origin));
+        lb.add(new SearchBehaviour(this, myMap, CollectorAID, origin));
         return lb;
     }
 
 
 
-    private void sendingMessage() {
+    private void sendingMessage() throws IOException {
         System.out.printf("Exp: intento envio");
         ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
         msg.addReceiver (CollectorAID);
-        msg.setContent(String.valueOf(origin));
+        Couple<Location, MapRepresentation> struct = new Couple<>(origin, myMap);
+        msg.setContentObject(struct);
+        //msg.setContentObject(myMap);
         msg.setSender(this.getAID());
         sendMessage (msg); //IMPORTANTE PARA RESPETAR EL RANGO DE COMUNICACIÓN
     }
+
+    /*private void sendingMessage2() throws IOException {
+        System.out.printf("Exp: intento envio");
+        ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
+        msg.addReceiver (CollectorAID);
+        msg.setContentObject(myMap);
+        msg.setSender(this.getAID());
+        sendMessage (msg); //IMPORTANTE PARA RESPETAR EL RANGO DE COMUNICACIÓN
+    }*/
 
     private void register() throws FIPAException {
         DFAgentDescription dfd = new DFAgentDescription();
