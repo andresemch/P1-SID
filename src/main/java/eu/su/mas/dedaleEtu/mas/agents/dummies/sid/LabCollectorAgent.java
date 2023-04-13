@@ -18,9 +18,14 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class LabCollectorAgent extends AbstractDedaleAgent {
     /**
@@ -32,6 +37,7 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
 
     Couple<String, MapRepresentation> struct;
     Location originA;
+    MapRepresentation myMap;
     boolean found = false;
     AID ExplorerAID;
 
@@ -81,9 +87,17 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                         //System.out.println("Col: Llego el mensaje con loc" + struct.getLeft().toString());
                         System.out.println("REACHES HERE");
                         System.out.println(struct.getLeft());
+                        myMap= struct.getRight();
+
+                       /* //para serializar:
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        String mapJson = objectMapper.writeValueAsString(myMap);
+                        System.out.println("Gets map correctly. Map content: "+mapJson);
+                        */
                     } catch (UnreadableException e) {
                         throw new RuntimeException(e);
                     }
+
                     System.out.println("Col: Llego el mensaje");
                     sendingMessage();
                 }
