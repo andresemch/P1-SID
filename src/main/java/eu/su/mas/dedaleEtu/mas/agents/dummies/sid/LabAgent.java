@@ -1,12 +1,16 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 
+import dataStructures.serializableGraph.SerializableSimpleGraph;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
+import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SearchBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
+import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -14,6 +18,7 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,11 +33,13 @@ public class LabAgent extends AbstractDedaleAgent {
      */
 
     Location origin;
-    MapRepresentation myMap = null;
+    MapRepresentation myMap;
 
     boolean found = false;
 
     AID CollectorAID;
+
+    SearchBehaviour sBehaviour = null;
 
     protected void setup() {
         super.setup();
@@ -73,7 +80,7 @@ public class LabAgent extends AbstractDedaleAgent {
                 }
             }
         });
-     /* Behaviour enviarmensaje= new CyclicBehaviour() {
+        lb.add(new CyclicBehaviour() {
             @Override
             public void action() {
                 if (!found) {
@@ -88,48 +95,10 @@ public class LabAgent extends AbstractDedaleAgent {
                         found = true;
                     }
                 }
-                else{
-                    System.out.println("Cyclic should end here \n");
-
-                }
-
             }
-        };*/
-      Behaviour enviarmensaje= new TickerBehaviour(this,1) {
-          @Override
-          protected void onTick() {
-              if (!found) {
-                  try {
-                      sendingMessage();
-                  } catch (IOException e) {
-                      throw new RuntimeException(e);
-                  }
-                  ACLMessage msg = receive();
-                  if (msg != null) {
-                      System.out.println("Exp: Responde correctamente");
-                      found = true;
-                  }
-              }
-              else{
-                  System.out.println("Ticker should end here \n");
-                  stop();
-                  System.out.println("Ticker is stopped succesfully");
-              }
-          }
-      };
-
-
-        lb.add(enviarmensaje);
-        System.out.println("Ha acabat el ticker?: "+enviarmensaje.done());
-        if (enviarmensaje.done()) System.out.println("\n***** Si que acaba el ticker ******\n");
-
-
-        Behaviour busca= new SearchBehaviour(this, myMap, CollectorAID, origin);
-        lb.add(busca);
-        if (busca.done()){
-            System.out.println("\n ----Ha acabado el behaviour ---- \n");
-            System.out.println(myMap==null);
-        }
+        });
+        sBehaviour = new SearchBehaviour(this, myMap);
+        lb.add(sBehaviour);
         return lb;
     }
 
@@ -139,14 +108,25 @@ public class LabAgent extends AbstractDedaleAgent {
         System.out.printf("Exp: intento envio");
         ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
         msg.addReceiver (CollectorAID);
-        Couple<String, MapRepresentation> struct = new Couple<>(origin.toString(), myMap);
+        if (sBehaviour != null) System.out.println("EL PUTO MAPAA " + sBehaviour.getMyMap());
+        if (sBehaviour != null) myMap = sBehaviour.getMyMap();
+        Couple<String, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>> struct;
+        if (myMap != null) {
+            //myMap.prepareMigration();
+            SerializableSimpleGraph<String, MapRepresentation.MapAttribute> sg = myMap.getSerializableGraph();
+            struct = new Couple<>(origin.toString(), sg);
+        }
+        else {
+            //MapRepresentation emptyMap = new MapRepresentation();
+            //emptyMap.prepareMigration();
+            SerializableSimpleGraph<String, MapRepresentation.MapAttribute> sg = new SerializableSimpleGraph<>();
+            struct = new Couple<>(origin.toString(), sg);
+        }
         msg.setContentObject(struct);
         //msg.setContentObject(myMap);
         msg.setSender(this.getAID());
         sendMessage (msg); //IMPORTANTE PARA RESPETAR EL RANGO DE COMUNICACIÓN
     }
-
-
 
     /*private void sendingMessage2() throws IOException {
         System.out.printf("Exp: intento envio");

@@ -1,16 +1,15 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 
+import dataStructures.serializableGraph.SerializableSimpleGraph;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
-import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
 import jade.core.Location;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
-import jade.core.behaviours.WakerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
@@ -18,14 +17,9 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class LabCollectorAgent extends AbstractDedaleAgent {
     /**
@@ -35,9 +29,12 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
      * 2) add the behaviours
      */
 
-    Couple<String, MapRepresentation> struct;
+    Couple<String, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>> struct;
     Location originA;
     MapRepresentation myMap;
+
+    SerializableSimpleGraph<String, MapRepresentation.MapAttribute> returnMap = new SerializableSimpleGraph<>();
+
     boolean found = false;
     AID ExplorerAID;
 
@@ -82,12 +79,17 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                 ACLMessage msg = receive();
                 if (msg != null) {
                     try {
-                        struct = (Couple<String, MapRepresentation>) msg.getContentObject();
+                        struct = (Couple<String, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>>) msg.getContentObject();
 //                        System.out.println("REACHES HERE");
                         //System.out.println("Col: Llego el mensaje con loc" + struct.getLeft().toString());
                         System.out.println("REACHES HERE");
-                        System.out.println(struct.getLeft());
-                        myMap= struct.getRight();
+                        System.out.println("Ubicacio " + struct.getLeft());
+                        returnMap = struct.getRight();
+                        System.out.println("Map " + returnMap);
+
+
+
+                        //returnMap = MapRepresentation.fromString(myMap);
 
                        /* //para serializar:
                         ObjectMapper objectMapper = new ObjectMapper();

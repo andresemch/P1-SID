@@ -34,17 +34,13 @@ public class SearchBehaviour extends SimpleBehaviour {
      */
     private final Set<String> closedNodes;
 
-    private final AID CollectorAID;
+    public MapRepresentation finalMap = null;
 
-    private final Location origin;
-
-    public SearchBehaviour(final AbstractDedaleAgent myagent, MapRepresentation myMap, AID CollectorAID, Location origin) {
+    public SearchBehaviour(final AbstractDedaleAgent myagent, MapRepresentation myMap) {
         super(myagent);
         this.myMap = myMap;
         this.openNodes = new ArrayList<>();
         this.closedNodes = new HashSet<>();
-        this.CollectorAID = CollectorAID;
-        this.origin = origin;
     }
 
     @Override
@@ -144,8 +140,14 @@ public class SearchBehaviour extends SimpleBehaviour {
         }
     }
 
+    public MapRepresentation getMyMap() {
+        finalMap = myMap;
+        return finalMap;
+    }
+
     @Override
     public boolean done() {
+        //if (finished) System.out.println(getMyMap());
         return finished;
     }
 }
