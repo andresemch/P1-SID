@@ -20,8 +20,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class LabCollectorAgent extends AbstractDedaleAgent {
     /**
@@ -109,28 +108,36 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
 
                         myMap.addNode(obs.getLeft().toString(), MapRepresentation.MapAttribute.open);
                         myMap.addEdge(getCurrentPosition().toString(), obs.getLeft().toString());
-                        /*List<String> adjacentNodes = myMap.getShortestPath(obs.getLeft().toString(), "-1");
-                        for (String o: adjacentNodes) {
-                            myMap.addNode(o, MapRepresentation.MapAttribute.closed);
-                            myMap.addEdge(obs.toString(), o);
-                        }*/
                     }
-
+                    myMap.removeNode(finExplo.toString());
                     System.out.println("\n origin A es: "+ originA.toString() + " " + originA.toString().getClass());
                     System.out.println("\n destino es:  "+ destino.toString() + " " + destino.toString().getClass());
-                    path = myMap.getShortestPath(originA.toString(), destino.toString());
+
+                 //   path = myMap.getShortestPath(originA.toString(), destino.toString());
                     found = true;
                     //System.out.print("\n MAP RECEIVED \n" );
 
                     System.out.println("Col: Llego el mensaje");
+                    System.out.println("\n open nodes:"+myMap.getOpenNodes());
                     sendingMessage();
                 }
             }
         });
-        lb.add(new CyclicBehaviour() {
+        /*lb.add(new CyclicBehaviour() {
             @Override
             public void action() {
                 if (found) {
+                    System.out.println("\n -- PATH: --"+path+"\n");
+                    for (Couple<Location, List<Couple<Observation, Integer>>> obs: observe()) {
+                        System.out.println("\n ** neighbour: **"+obs.getLeft().toString());
+                    }
+                    System.out.println("\n");
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                     if (path.isEmpty()) done();
                     else {
                         //Location nextMove =
@@ -140,6 +147,56 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                         else path.remove(0);
                     }
                 }
+            }
+        });*/
+        lb.add(new SimpleBehaviour() {
+
+            private boolean finished = false;
+            @Override
+            public void action() {
+                if (found && !getCurrentPosition().toString().equals(destino.toString())) {
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (getCurrentPosition().toString().equals(destino.toString()) || getCurrentPosition().toString().equals(finExplo.toString())) {
+                        finished = true;
+                        System.out.println("DEBERIA ESTAR FINISHED");
+                    }
+                    else {
+                        //Location nextMove =
+                        List<String> vecinos = new ArrayList<>();
+                        for (Couple<Location, List<Couple<Observation, Integer>>> obs: observe()) {
+                             vecinos.add(obs.getLeft().toString());
+                        }
+                        List<String> path = myMap.getShortestPath(getCurrentPosition().toString(), destino.toString());
+                        String nextMove = null;
+                        System.out.println("path: "+path+"\n");
+                        if (path != null && !path.isEmpty()) {
+                            nextMove = path.get(0);
+                            if (nextMove!= finExplo.toString() && vecinos.contains(nextMove)) {
+                                System.out.println("\n Next move is:"+nextMove+"\n");
+                                moveTo(new gsLocation(nextMove));
+                            }
+                        }
+                        else {
+                            String aux = vecinos.get(0);
+
+                            if (aux != finExplo.toString() ) {
+                                moveTo(new gsLocation(vecinos.get(1)));
+                            }
+                            else moveTo(new gsLocation(aux));
+                        }
+                        if (getCurrentPosition().toString().equals(destino.toString())) finished = true;
+                        //else path.remove(0);
+                    }
+                }
+            }
+
+            public boolean done() {
+                return finished;
             }
         });
         return lb;
