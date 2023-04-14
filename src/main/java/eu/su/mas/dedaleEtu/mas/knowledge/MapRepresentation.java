@@ -77,6 +77,14 @@ public class MapRepresentation implements Serializable {
         n.setAttribute("ui.label", id);
     }
 
+    public synchronized void removeNode(String id) {
+        Node n = null;
+        if (this.g.getNode(id) != null) {
+            n = this.g.removeNode(id);
+        }
+        //n.clearAttributes();
+    }
+
     /**
      * Add a node to the graph. Do nothing if the node already exists.
      * If new, it is labeled as open (non-visited)
