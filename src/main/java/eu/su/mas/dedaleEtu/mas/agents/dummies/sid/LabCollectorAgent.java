@@ -13,6 +13,7 @@ import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
@@ -104,6 +105,7 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                         myMap=mapp;
                     }
                     myMap.addNode(getCurrentPosition().toString(), MapRepresentation.MapAttribute.closed);
+
                     for (Couple<Location, List<Couple<Observation, Integer>>> obs: observe()) {
 
                         myMap.addNode(obs.getLeft().toString(), MapRepresentation.MapAttribute.open);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dataStructures.serializableGraph.SerializableSimpleGraph;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
+import eu.su.mas.dedale.env.gs.gsLocation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.behaviours.SearchBehaviour;
@@ -90,6 +91,14 @@ public class LabAgent extends AbstractDedaleAgent {
                     ACLMessage msg = receive();
                     if (msg != null) {
                         System.out.println("Exp: Responde correctamente");
+                        String move = msg.getContent();
+                        //System.out.println("Posicion move final " + move);
+                        //try {
+                        //    Thread.sleep(6000);
+                        //} catch (InterruptedException e) {
+                        //    throw new RuntimeException(e);
+                        //}
+                        //moveTo(new gsLocation(move));
                         found = true;
                     }
                 }
