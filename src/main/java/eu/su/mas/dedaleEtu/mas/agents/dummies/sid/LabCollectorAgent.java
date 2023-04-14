@@ -2,6 +2,9 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 
 import dataStructures.serializableGraph.SerializableSimpleGraph;
 import dataStructures.tuple.Couple;
+import eu.su.mas.dedale.env.Location;
+import eu.su.mas.dedale.env.Observation;
+import eu.su.mas.dedale.env.gs.gsLocation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
@@ -38,6 +41,7 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
 
     boolean found = false;
     AID ExplorerAID;
+
 
 
     protected void setup() {
@@ -88,6 +92,7 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                     }
                     System.out.println("REACHES HERE");
                     System.out.println("Ubicacio " + struct.getLeft());
+                    destino= new gsLocation(struct.getLeft());
                     returnMap = struct.getRight();
                     System.out.println(returnMap);
                     if (myMap!=null) myMap.mergeMap(returnMap);

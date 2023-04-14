@@ -139,6 +139,7 @@ public class LabAgent extends AbstractDedaleAgent {
         }
         struct = new Couple<>(origin.toString(), grafo);
         msg.setContentObject(struct);
+        //msg.setContentObject(myMap.getSerializableGraph());
         //msg.setContentObject(myMap);
         msg.setSender(this.getAID());
         sendMessage (msg); //IMPORTANTE PARA RESPETAR EL RANGO DE COMUNICACIÓN
