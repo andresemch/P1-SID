@@ -73,7 +73,7 @@ public class LabAgent extends AbstractDedaleAgent {
                 }
             }
         });
-      Behaviour enviarmensaje= new CyclicBehaviour() {
+     /* Behaviour enviarmensaje= new CyclicBehaviour() {
             @Override
             public void action() {
                 if (!found) {
@@ -88,10 +88,41 @@ public class LabAgent extends AbstractDedaleAgent {
                         found = true;
                     }
                 }
+                else{
+                    System.out.println("Cyclic should end here \n");
+
+                }
+
             }
-        };
+        };*/
+      Behaviour enviarmensaje= new TickerBehaviour(this,1) {
+          @Override
+          protected void onTick() {
+              if (!found) {
+                  try {
+                      sendingMessage();
+                  } catch (IOException e) {
+                      throw new RuntimeException(e);
+                  }
+                  ACLMessage msg = receive();
+                  if (msg != null) {
+                      System.out.println("Exp: Responde correctamente");
+                      found = true;
+                  }
+              }
+              else{
+                  System.out.println("Ticker should end here \n");
+                  stop();
+                  System.out.println("Ticker is stopped succesfully");
+              }
+          }
+      };
+
+
         lb.add(enviarmensaje);
-        if (enviarmensaje.done()) System.out.println("\n***** Si que acaba el cyclic ******\n");
+        System.out.println("Ha acabat el ticker?: "+enviarmensaje.done());
+        if (enviarmensaje.done()) System.out.println("\n***** Si que acaba el ticker ******\n");
+
 
         Behaviour busca= new SearchBehaviour(this, myMap, CollectorAID, origin);
         lb.add(busca);
