@@ -103,7 +103,7 @@ public class LabAgent extends AbstractDedaleAgent {
 
 
     private void sendingMessage() throws Exception {
-        System.out.printf("Exp: intento envio");
+        //System.out.printf("Exp: intento envio");
         ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
         msg.addReceiver (CollectorAID);
         if (sBehaviour != null) myMap = sBehaviour.getMyMap();

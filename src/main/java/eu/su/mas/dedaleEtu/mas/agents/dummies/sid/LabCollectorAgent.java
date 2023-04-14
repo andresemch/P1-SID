@@ -199,6 +199,7 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                 return finished;
             }
         });
+
         return lb;
     }
 
