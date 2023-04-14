@@ -106,42 +106,20 @@ public class LabAgent extends AbstractDedaleAgent {
         System.out.printf("Exp: intento envio");
         ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
         msg.addReceiver (CollectorAID);
-        //if (sBehaviour != null) System.out.println("EL PUTO MAPAA " + sBehaviour.getMyMap());
         if (sBehaviour != null) myMap = sBehaviour.getMyMap();
         Couple<Couple<String,String>, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>> struct;
 
-        //String json = "";
         SerializableSimpleGraph<String, MapRepresentation.MapAttribute> grafo;
         if (myMap != null) {
-            //Gson gson = new GsonBuilder().create();
-            //json = gson.toJson(myMap);
-
             grafo = myMap.getSerializableGraph();
-
-            //json = serialize(myMap);
-
-            //SerializableSimpleGraph<String, MapRepresentation.MapAttribute> sg = myMap.getSerializableGraph();
-
-            //myMap.loadSavedData();
         }
         else {
-
             MapRepresentation emptyMap = new MapRepresentation();
-
-            //json = serialize(emptyMap);
             grafo=emptyMap.getSerializableGraph();
-
-            //Gson gson = new Gson();
-            //json = gson.toJson(emptyMap);
-
-            //SerializableSimpleGraph<String, MapRepresentation.MapAttribute> sg = new SerializableSimpleGraph<>();
-            //struct = new Couple<>(origin.toString(), out);
         }
         Couple<String,String> localizaciones= new Couple<>(origin.toString(),getCurrentPosition().toString());
         struct = new Couple<>(localizaciones, grafo);
         msg.setContentObject(struct);
-        //msg.setContentObject(myMap.getSerializableGraph());
-        //msg.setContentObject(myMap);
         msg.setSender(this.getAID());
         sendMessage (msg); //IMPORTANTE PARA RESPETAR EL RANGO DE COMUNICACIÓN
     }
@@ -150,18 +128,6 @@ public class LabAgent extends AbstractDedaleAgent {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(map);
     }
-
-    /*private String stringBuild (MapRepresentation map) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < map.getWidth(); i++) {
-            for (int j = 0; j < map.getHeight(); j++) {
-                sb.append(map.getCellType(i, j));
-            }
-            sb.append("\n");
-
-        }
-        String mapString = sb.toString();
-    }*/
 
     /*private void sendingMessage2() throws IOException {
         System.out.printf("Exp: intento envio");
