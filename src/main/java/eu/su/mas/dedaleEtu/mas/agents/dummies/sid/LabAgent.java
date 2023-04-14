@@ -1,26 +1,24 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dataStructures.serializableGraph.SerializableSimpleGraph;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
-import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SearchBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.*;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
-import net.sourceforge.plantuml.command.PSystemAbstractFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +31,7 @@ public class LabAgent extends AbstractDedaleAgent {
      */
 
     Location origin;
-    MapRepresentation myMap;
+    public MapRepresentation myMap = null;
 
     boolean found = false;
 
@@ -86,7 +84,7 @@ public class LabAgent extends AbstractDedaleAgent {
                 if (!found) {
                     try {
                         sendingMessage();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                     ACLMessage msg = receive();
@@ -104,29 +102,64 @@ public class LabAgent extends AbstractDedaleAgent {
 
 
 
-    private void sendingMessage() throws IOException {
+    private void sendingMessage() throws Exception {
         System.out.printf("Exp: intento envio");
         ACLMessage msg = new ACLMessage (ACLMessage.INFORM);
         msg.addReceiver (CollectorAID);
-        if (sBehaviour != null) System.out.println("EL PUTO MAPAA " + sBehaviour.getMyMap());
+        //if (sBehaviour != null) System.out.println("EL PUTO MAPAA " + sBehaviour.getMyMap());
         if (sBehaviour != null) myMap = sBehaviour.getMyMap();
         Couple<String, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>> struct;
+
+        //String json = "";
+        SerializableSimpleGraph<String, MapRepresentation.MapAttribute> grafo;
         if (myMap != null) {
-            //myMap.prepareMigration();
-            SerializableSimpleGraph<String, MapRepresentation.MapAttribute> sg = myMap.getSerializableGraph();
-            struct = new Couple<>(origin.toString(), sg);
+            //Gson gson = new GsonBuilder().create();
+            //json = gson.toJson(myMap);
+
+            grafo = myMap.getSerializableGraph();
+
+            //json = serialize(myMap);
+
+            //SerializableSimpleGraph<String, MapRepresentation.MapAttribute> sg = myMap.getSerializableGraph();
+
+            //myMap.loadSavedData();
         }
         else {
-            //MapRepresentation emptyMap = new MapRepresentation();
-            //emptyMap.prepareMigration();
-            SerializableSimpleGraph<String, MapRepresentation.MapAttribute> sg = new SerializableSimpleGraph<>();
-            struct = new Couple<>(origin.toString(), sg);
+
+            MapRepresentation emptyMap = new MapRepresentation();
+
+            //json = serialize(emptyMap);
+            grafo=emptyMap.getSerializableGraph();
+
+            //Gson gson = new Gson();
+            //json = gson.toJson(emptyMap);
+
+            //SerializableSimpleGraph<String, MapRepresentation.MapAttribute> sg = new SerializableSimpleGraph<>();
+            //struct = new Couple<>(origin.toString(), out);
         }
+        struct = new Couple<>(origin.toString(), grafo);
         msg.setContentObject(struct);
         //msg.setContentObject(myMap);
         msg.setSender(this.getAID());
         sendMessage (msg); //IMPORTANTE PARA RESPETAR EL RANGO DE COMUNICACIÓN
     }
+
+    public static String serialize(MapRepresentation map) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(map);
+    }
+
+    /*private String stringBuild (MapRepresentation map) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < map.getWidth(); i++) {
+            for (int j = 0; j < map.getHeight(); j++) {
+                sb.append(map.getCellType(i, j));
+            }
+            sb.append("\n");
+
+        }
+        String mapString = sb.toString();
+    }*/
 
     /*private void sendingMessage2() throws IOException {
         System.out.printf("Exp: intento envio");

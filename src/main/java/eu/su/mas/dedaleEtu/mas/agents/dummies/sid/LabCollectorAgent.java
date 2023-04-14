@@ -16,7 +16,6 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +40,7 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
 
     protected void setup() {
         super.setup();
+      //  myMap = new MapRepresentation();
 
         List<Behaviour> lb = behavioursList();
 
@@ -80,25 +80,20 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                 if (msg != null) {
                     try {
                         struct = (Couple<String, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>>) msg.getContentObject();
-//                        System.out.println("REACHES HERE");
-                        //System.out.println("Col: Llego el mensaje con loc" + struct.getLeft().toString());
-                        System.out.println("REACHES HERE");
-                        System.out.println("Ubicacio " + struct.getLeft());
-                        returnMap = struct.getRight();
-                        System.out.println("Map " + returnMap);
-
-
-
-                        //returnMap = MapRepresentation.fromString(myMap);
-
-                       /* //para serializar:
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        String mapJson = objectMapper.writeValueAsString(myMap);
-                        System.out.println("Gets map correctly. Map content: "+mapJson);
-                        */
-                    } catch (UnreadableException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
+                    System.out.println("REACHES HERE");
+                    System.out.println("Ubicacio " + struct.getLeft());
+                    returnMap = struct.getRight();
+                    System.out.println(returnMap);
+                    if (myMap!=null) myMap.mergeMap(returnMap);
+                    else {
+                        MapRepresentation mapp= new MapRepresentation();
+                        mapp.mergeMap(returnMap);
+                        myMap=mapp;
+                    }
+                    //System.out.print("\n MAP RECEIVED \n" );
 
                     System.out.println("Col: Llego el mensaje");
                     sendingMessage();

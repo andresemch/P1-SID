@@ -10,6 +10,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.14.1" level="project" />
+    <orderEntry type="library" name="Maven: org.json:json:20211205" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.12.3" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.14.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.10" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-web:13.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-web:linux:13.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:13.0.2" level="project" />
@@ -62,9 +67,6 @@
     <orderEntry type="library" name="Maven: net.sourceforge.plantuml:plantuml:8036" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.12.3" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.12.3" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.12.3" level="project" />
     <orderEntry type="library" name="Maven: com.gitlab.dedale:dedale:-b2388f12e1-1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.11" level="project" />
     <orderEntry type="library" name="Maven: nz.ac.waikato.cms.weka:weka-stable:3.8.6" level="project" />
@@ -108,5 +110,32 @@
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.13.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.13.1" level="project" />
     <orderEntry type="library" name="Maven: kephale:matlabcontrol:4.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.jena:jena-arq:4.7.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.jena:jena-core:4.7.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.jena:jena-base:4.7.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.jena:jena-shaded-guava:4.7.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-csv:1.9.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.11.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.22" level="project" />
+    <orderEntry type="library" name="Maven: com.github.andrewoma.dexx:collection:0.7" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.jena:jena-iri:4.7.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.5.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.jsonld-java:jsonld-java:0.13.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient-cache:4.5.13" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.13" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.13" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.36" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.36" level="project" />
+    <orderEntry type="library" name="Maven: com.apicatalog:titanium-json-ld:1.3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish:jakarta.json:2.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.21.10" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.thrift:libthrift:0.17.0" level="project" />
+    <orderEntry type="library" name="Maven: org.antlr:antlr4:4.11.1" level="project" />
+    <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.11.1" level="project" />
+    <orderEntry type="library" name="Maven: org.antlr:antlr-runtime:3.5.3" level="project" />
+    <orderEntry type="library" name="Maven: org.antlr:ST4:4.3.4" level="project" />
+    <orderEntry type="library" name="Maven: org.abego.treelayout:org.abego.treelayout.core:1.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish:javax.json:1.1.4" level="project" />
+    <orderEntry type="library" name="Maven: com.ibm.icu:icu4j:71.1" level="project" />
   </component>
 </module>
