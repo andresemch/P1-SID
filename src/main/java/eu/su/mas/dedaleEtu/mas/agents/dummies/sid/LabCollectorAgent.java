@@ -6,7 +6,6 @@ import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
-import jade.core.Location;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -29,8 +28,11 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
      */
 
     Couple<String, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>> struct;
-    Location originA;
+    gsLocation originA;
+    gsLocation destino;
     MapRepresentation myMap;
+
+    List<String> path;
 
     SerializableSimpleGraph<String, MapRepresentation.MapAttribute> returnMap = new SerializableSimpleGraph<>();
 
@@ -56,6 +58,7 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
             public void action() {
                 try {
                     register();
+                    originA = (gsLocation) getCurrentPosition();
                     System.out.println("Soy el Agente B y mi AID es " + getAID().getName());
                 } catch (FIPAException e) {
                     throw new RuntimeException(e);
@@ -93,10 +96,40 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                         mapp.mergeMap(returnMap);
                         myMap=mapp;
                     }
+                    myMap.addNode(getCurrentPosition().toString(), MapRepresentation.MapAttribute.closed);
+                    for (Couple<Location, List<Couple<Observation, Integer>>> obs: observe()) {
+                        
+                        myMap.addNode(obs.getLeft().toString(), MapRepresentation.MapAttribute.closed);
+                        myMap.addEdge(getCurrentPosition().toString(), obs.getLeft().toString());
+                        List<String> adjacentNodes = myMap.getShortestPath(obs.toString(), "-1");
+                        for (String o: adjacentNodes) {
+                            myMap.addNode(o, MapRepresentation.MapAttribute.closed);
+                            myMap.addEdge(obs.toString(), o);
+                        }
+                    }
+
+                    System.out.println("\n origin A es: "+ originA.toString() + " " + originA.toString().getClass());
+                    System.out.println("\n destino es:  "+ destino.toString() + " " + destino.toString().getClass());
+                    path = myMap.getShortestPath(originA.toString(), destino.toString());
+                    found = true;
                     //System.out.print("\n MAP RECEIVED \n" );
 
                     System.out.println("Col: Llego el mensaje");
                     sendingMessage();
+                }
+            }
+        });
+        lb.add(new CyclicBehaviour() {
+            @Override
+            public void action() {
+                if (found) {
+                    if (path.isEmpty()) done();
+                    else {
+                        //Location nextMove =
+                        moveTo(new gsLocation(path.get(0)));
+                        if (getCurrentPosition() == destino) done();
+                        else path.remove(0);
+                    }
                 }
             }
         });
