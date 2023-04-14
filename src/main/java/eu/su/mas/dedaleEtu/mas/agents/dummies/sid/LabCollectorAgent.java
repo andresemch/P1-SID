@@ -2,6 +2,7 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 
 import dataStructures.serializableGraph.SerializableSimpleGraph;
 import dataStructures.tuple.Couple;
+import eu.su.mas.dedale.env.EnvironmentType;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.env.gs.gsLocation;
@@ -30,9 +31,10 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
      * 2) add the behaviours
      */
 
-    Couple<String, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>> struct;
+    Couple<Couple<String,String>, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>> struct;
     gsLocation originA;
     gsLocation destino;
+    gsLocation finExplo;
     MapRepresentation myMap;
 
     List<String> path;
@@ -86,13 +88,14 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                 ACLMessage msg = receive();
                 if (msg != null) {
                     try {
-                        struct = (Couple<String, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>>) msg.getContentObject();
+                        struct = (Couple<Couple<String,String>, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>>) msg.getContentObject();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                     System.out.println("REACHES HERE");
                     System.out.println("Ubicacio " + struct.getLeft());
-                    destino= new gsLocation(struct.getLeft());
+                    destino= new gsLocation(struct.getLeft().getLeft());
+                    finExplo= new gsLocation(struct.getLeft().getRight());
                     returnMap = struct.getRight();
                     System.out.println(returnMap);
                     if (myMap!=null) myMap.mergeMap(returnMap);
@@ -103,14 +106,14 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                     }
                     myMap.addNode(getCurrentPosition().toString(), MapRepresentation.MapAttribute.closed);
                     for (Couple<Location, List<Couple<Observation, Integer>>> obs: observe()) {
-                        
-                        myMap.addNode(obs.getLeft().toString(), MapRepresentation.MapAttribute.closed);
+
+                        myMap.addNode(obs.getLeft().toString(), MapRepresentation.MapAttribute.open);
                         myMap.addEdge(getCurrentPosition().toString(), obs.getLeft().toString());
-                        List<String> adjacentNodes = myMap.getShortestPath(obs.toString(), "-1");
+                        /*List<String> adjacentNodes = myMap.getShortestPath(obs.getLeft().toString(), "-1");
                         for (String o: adjacentNodes) {
                             myMap.addNode(o, MapRepresentation.MapAttribute.closed);
                             myMap.addEdge(obs.toString(), o);
-                        }
+                        }*/
                     }
 
                     System.out.println("\n origin A es: "+ originA.toString() + " " + originA.toString().getClass());
@@ -131,7 +134,8 @@ public class LabCollectorAgent extends AbstractDedaleAgent {
                     if (path.isEmpty()) done();
                     else {
                         //Location nextMove =
-                        moveTo(new gsLocation(path.get(0)));
+                        String nextMove= path.get(0);
+                        if (nextMove!= finExplo.toString()) moveTo(new gsLocation(path.get(0)));
                         if (getCurrentPosition() == destino) done();
                         else path.remove(0);
                     }

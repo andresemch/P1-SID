@@ -108,7 +108,7 @@ public class LabAgent extends AbstractDedaleAgent {
         msg.addReceiver (CollectorAID);
         //if (sBehaviour != null) System.out.println("EL PUTO MAPAA " + sBehaviour.getMyMap());
         if (sBehaviour != null) myMap = sBehaviour.getMyMap();
-        Couple<String, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>> struct;
+        Couple<Couple<String,String>, SerializableSimpleGraph<String, MapRepresentation.MapAttribute>> struct;
 
         //String json = "";
         SerializableSimpleGraph<String, MapRepresentation.MapAttribute> grafo;
@@ -137,7 +137,8 @@ public class LabAgent extends AbstractDedaleAgent {
             //SerializableSimpleGraph<String, MapRepresentation.MapAttribute> sg = new SerializableSimpleGraph<>();
             //struct = new Couple<>(origin.toString(), out);
         }
-        struct = new Couple<>(origin.toString(), grafo);
+        Couple<String,String> localizaciones= new Couple<>(origin.toString(),getCurrentPosition().toString());
+        struct = new Couple<>(localizaciones, grafo);
         msg.setContentObject(struct);
         //msg.setContentObject(myMap.getSerializableGraph());
         //msg.setContentObject(myMap);
